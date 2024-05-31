@@ -9,3 +9,4 @@ COPY config.txt /app/config.txt
 
 # Define the command to run when the container starts
 CMD ["echo", "Container is ready!"]
+
