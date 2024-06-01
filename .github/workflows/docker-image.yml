@@ -11,7 +11,7 @@ jobs:
 
     steps:
       - name: Checkout repository  # Step to check out the repository
-        uses: actions/checkout@v3  # Uses the official action to check out the code
+        uses: actions/checkout@v2  # Uses the official action to check out the code
 
       - name: Set up Docker Buildx  # Optional step to set up Docker Buildx
         uses: docker/setup-buildx-action@v2
