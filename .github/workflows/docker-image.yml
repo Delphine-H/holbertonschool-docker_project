@@ -10,6 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Convert GitHub username to lowercase
+    - name: Convert GitHub username to lowercase
+      run: |
+        username_lowercase=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+        echo "::set-env name=GITHUB_USERNAME_LOWERCASE::${username_lowercase}"
+
     # Checkout the repository
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -23,21 +29,15 @@ jobs:
       uses: docker/login-action@v2
       with:
         registry: ghcr.io
-        username: ${{ github.actor }}
+        username: ${{ env.GITHUB_USERNAME_LOWERCASE }}
         password: ${{ secrets.CR_PAT }}
 
     # Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest .
-
-    # Convert repository name to lowercase
-    - name: Convert repository name to lowercase
-      run: |
-        repo_name_lowercase=$(echo "${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
-        echo "::set-env name=REPO_NAME_LOWERCASE::${repo_name_lowercase}"
+        docker build -t ghcr.io/${{ env.GITHUB_USERNAME_LOWERCASE }}/${{ github.event.repository.name | lower }}:latest .
 
     # Push the Docker image to the GitHub Container Registry
     - name: Push Docker image
       run: |
-        docker push ghcr.io/${{ github.repository_owner }}/${{ env.REPO_NAME_LOWERCASE }}:latest
+        docker push ghcr.io/${{ env.GITHUB_USERNAME_LOWERCASE }}/${{ github.event.repository.name | lower }}:latest
