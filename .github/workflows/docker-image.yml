@@ -29,9 +29,14 @@ jobs:
     # Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name | lower }}:latest .
+        docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}:latest .
+
+    # Convert repository name to lowercase
+    - name: Convert repository name to lowercase
+      id: convert_to_lowercase
+      run: echo "::set-output name=repo_name::${{ github.event.repository.name | tolower }}"
 
     # Push the Docker image to the GitHub Container Registry
     - name: Push Docker image
       run: |
-        docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name | lower }}:latest
+        docker push ghcr.io/${{ github.repository_owner }}/${{ steps.convert_to_lowercase.outputs.repo_name }}:latest
