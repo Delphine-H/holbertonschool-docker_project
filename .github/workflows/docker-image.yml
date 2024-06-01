@@ -3,28 +3,35 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - main  # Triggers the workflow when a push is made to the main branch
-
+      - '**'  # Triggers on push to any branch
+      
 jobs:
-  build_and_push:
-    runs-on: ubuntu-latest  # Specifies the execution environment
+  build-and-push:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository  # Step to check out the repository
-        uses: actions/checkout@v2  # Uses the official action to check out the code
+    # Checkout the repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx  # Optional step to set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    # Set up Docker Buildx
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image  # Step to build the Docker image
-        run: docker build -t ${{ github.repository }}:${{ github.sha }} .
+    # Log in to the GitHub Container Registry
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.CR_PAT }}
 
-      - name: Log in to GitHub Container Registry  # Step to log in to the GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.CR_PAT }}
+    # Build the Docker image
+    - name: Build Docker image
+      run: |
+        docker build -t ghcr.io/${{ github.repository }}:latest .
 
-      - name: Push Docker image to GitHub Container Registry  # Step to push the Docker image to the registry
-        run: docker push ${{ github.repository }}:${{ github.sha }}
+    # Push the Docker image to the GitHub Container Registry
+    - name: Push Docker image
+      run: |
+        docker push ghcr.io/${{ github.repository }}:latest
