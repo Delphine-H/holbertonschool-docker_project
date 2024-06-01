@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - '**'  # Triggers on push to any branch
+      - '**'  # Déclenche sur tout push sur n'importe quelle branche
 
 jobs:
   build-and-push:
@@ -29,9 +29,9 @@ jobs:
     # Build the Docker image
     - name: Build Docker image
       run: |
-        docker build -t ghcr.io/${{ github.repository }}:latest .
+        docker build -t ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name | lower }}:latest .
 
     # Push the Docker image to the GitHub Container Registry
     - name: Push Docker image
       run: |
-        docker push ghcr.io/${{ github.repository }}:latest
+        docker push ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name | lower }}:latest
