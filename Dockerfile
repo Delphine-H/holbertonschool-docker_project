@@ -1,12 +1,11 @@
-# Use the Alpine base image
-FROM alpine
+# Use a lightweight base image
+FROM alpine:latest
 
-# Install the curl package
+# Install curl package
 RUN apk add --no-cache curl
 
-# Add the config.txt file to a suitable location in the container
+# Add a configuration file to /app directory
 COPY config.txt /app/config.txt
 
-# Define the command to run when the container starts
-CMD ["echo", "Container is ready!"]
-
+# Use CMD to echo "Hello, World!" when the container starts
+CMD ["echo", "Hello, World!"]
